@@ -15,7 +15,7 @@ This template gives you:
 
 ### How the SDK fits in
 
-The `@n8n/workflow-sdk` is **not** something you install locally. It lives inside the MCP server workflow itself, embedded in Code nodes:
+The [`@n8n/workflow-sdk`](https://www.npmjs.com/package/@n8n/workflow-sdk) is **not** something you install locally. It lives inside the MCP server workflow itself, embedded in Code nodes:
 
 - **`search_workflows`** — searches workflows by name and returns a list with IDs and metadata
 - **`get_workflow`** — retrieves a workflow's JSON from n8n and uses the SDK to convert it to TypeScript, which is returned to Claude
