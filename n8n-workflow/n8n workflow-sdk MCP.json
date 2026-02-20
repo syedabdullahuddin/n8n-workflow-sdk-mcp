@@ -1,0 +1,887 @@
+{
+  "name": "n8n workflow-sdk MCP",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node: Workflow JSON → TypeScript\n// Input:  any node outputting a workflow JSON object\n// Output: { typescriptCode: string }\n\nconst { generateWorkflowCode } = require('@n8n/workflow-sdk');\n\nconst workflowJson = $input.first().json;\n\n// Handle both raw workflow objects and n8n export format (array wrapper)\nconst workflow = Array.isArray(workflowJson) ? workflowJson[0] : workflowJson;\n\nconst typescriptCode = generateWorkflowCode(workflow);\n\nreturn [{ json: { typescriptCode } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        528,
+        -96
+      ],
+      "id": "b841a8c6-f3bc-4e16-b3f9-e7b4b9634aa8",
+      "name": "WF to TS"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node: TypeScript → Workflow JSON\n// Input:  { typescriptCode: string }\n// Output: { workflowJsonString: string }\n\nconst { parseWorkflowCodeToBuilder } = require('@n8n/workflow-sdk');\n\nconst tsSource = $input.first().json.typescriptCode;\n\nconst builder = parseWorkflowCodeToBuilder(tsSource);\nconst data = builder.toJSON();\n\nif (data.settings) {\n  delete data.settings.callerPolicy;\n  delete data.settings.binaryMode;\n}\n\nconst workflowJsonString = JSON.stringify(data, null, 2);\n\nreturn [{ json: { workflowJsonString } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        96
+      ],
+      "id": "3ae1387d-5ada-420d-a1ef-5dc70cfe1f61",
+      "name": "TS to WF"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "action"
+            },
+            {
+              "name": "workflow_search_term"
+            },
+            {
+              "name": "workflow_id"
+            },
+            {
+              "name": "typescriptCode"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -144,
+        -64
+      ],
+      "id": "3cab8c72-993b-46ef-b2e2-d600317c4650",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "ea7bf869-2711-4256-a481-550c9fbc8f53",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "search",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "search"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "get",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "2ab9634a-746f-4764-a16e-662810f8f29f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "get"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d77526f2-598b-4c6f-baf3-5ea90dc56694",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "update",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "update"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "180a5dc7-48f5-47ca-b554-80feeabb34f1",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "create",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "create"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        -96
+      ],
+      "id": "dad34170-5b83-48c2-8f48-cc18d2667b01",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to get the workflow data and return it as typescript",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $workflow.id }}",
+          "cachedResultName": "={{ $workflow.id }}"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "action": "get",
+            "workflow_id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('workflow_id', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "action"
+          ],
+          "schema": [
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "workflow_search_term",
+              "displayName": "workflow_search_term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "workflow_id",
+              "displayName": "workflow_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "typescriptCode",
+              "displayName": "typescriptCode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        256,
+        -528
+      ],
+      "id": "9ac0cbe3-e4e1-4966-890d-bc1f067cbda4",
+      "name": "get_workflow"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to update an existing workflow based on the given typescript data",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $workflow.id }}",
+          "cachedResultName": "={{ $workflow.id }}"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "action": "update",
+            "typescriptCode": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('typescriptCode', ``, 'string') }}",
+            "workflow_id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('workflow_id', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "action"
+          ],
+          "schema": [
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "workflow_search_term",
+              "displayName": "workflow_search_term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "workflow_id",
+              "displayName": "workflow_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "typescriptCode",
+              "displayName": "typescriptCode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        544,
+        -528
+      ],
+      "id": "b6eff4af-49d7-4f88-93dd-7bc0425874e4",
+      "name": "update_workflow"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to search for workflows by name and retrieve their ID alongside some metadata",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $workflow.id }}",
+          "cachedResultName": "={{ $workflow.id }}"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "action": "search",
+            "workflow_search_term": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('workflow_search_term', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "workflow_search_term",
+              "displayName": "workflow_search_term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "workflow_id",
+              "displayName": "workflow_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "typescriptCode",
+              "displayName": "typescriptCode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        112,
+        -528
+      ],
+      "id": "12239956-47a9-4c3d-bbbe-9deeb93d4601",
+      "name": "search_workflows"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $json.workflow_id }}",
+          "mode": "id"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        304,
+        -96
+      ],
+      "id": "805a3121-4177-4b0c-923d-cfa677962b8b",
+      "name": "Get a workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "avIh0YwIK8scY3gS",
+          "name": "new"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e4de9696-d929-45f3-91c3-ad81c007781a",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "2c577289-482a-48b3-97f4-5d85ba6e31f9",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "7eb50c26-0e7c-4e71-86be-55b5cfb06171",
+              "name": "isArchived",
+              "value": "={{ $json.isArchived }}",
+              "type": "boolean"
+            },
+            {
+              "id": "81366da3-50ed-456a-addd-59f6d0abae3d",
+              "name": "createdAt",
+              "value": "={{ $json.createdAt }}",
+              "type": "string"
+            },
+            {
+              "id": "946806c9-7b0a-48ce-9ee7-8e7286a5abdc",
+              "name": "updatedAt",
+              "value": "={{ $json.updatedAt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        528,
+        -288
+      ],
+      "id": "9c8b5a44-fd92-43ff-8518-0c6ee1d53ba8",
+      "name": "Format response"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $('When Executed by Another Workflow').item.json.workflow_id }}",
+          "mode": "id"
+        },
+        "workflowObject": "={{ $json.workflowJsonString }}",
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        752,
+        0
+      ],
+      "id": "145e9475-9bd1-4157-8e4d-6dd96fb74fa0",
+      "name": "Update workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "avIh0YwIK8scY3gS",
+          "name": "new"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c90fe6cd-ef38-49df-9089-7850396e123f",
+              "name": "response",
+              "value": "Successfully updated workflow",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        976,
+        0
+      ],
+      "id": "20ba2baf-f975-46ce-83fc-7a96a79baad3",
+      "name": "Return success message"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to create a new workflow based on the given typescript data",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id",
+          "cachedResultUrl": "/workflow/=%7B%7B%20$workflow.id%20%7D%7D"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "action": "create",
+            "typescriptCode": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('typescriptCode', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "workflow_search_term",
+              "displayName": "workflow_search_term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "workflow_id",
+              "displayName": "workflow_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "typescriptCode",
+              "displayName": "typescriptCode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        -528
+      ],
+      "id": "f4337016-45f0-4b8e-95fa-b30782ab3d3c",
+      "name": "create_workflow"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f2ec0551-ad3d-44ff-8c87-d6d32a6b8f7f",
+              "leftValue": "={{ $('Switch').item.json.action }}",
+              "rightValue": "update",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        528,
+        96
+      ],
+      "id": "5be1bfba-f4e6-4647-a986-635b0418430a",
+      "name": "Action: update?"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "workflowObject": "={{ $json.workflowJsonString }}",
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        752,
+        192
+      ],
+      "id": "273da095-26ed-4aca-90c6-e2efe0998dda",
+      "name": "Create workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "avIh0YwIK8scY3gS",
+          "name": "new"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e4de9696-d929-45f3-91c3-ad81c007781a",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "2c577289-482a-48b3-97f4-5d85ba6e31f9",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "81366da3-50ed-456a-addd-59f6d0abae3d",
+              "name": "createdAt",
+              "value": "={{ $json.createdAt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        976,
+        192
+      ],
+      "id": "a064067f-fd88-4441-9149-994846f43332",
+      "name": "Return workflow details"
+    },
+    {
+      "parameters": {
+        "filters": {
+          "name": "={{ $json.workflow_search_term }}"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        304,
+        -288
+      ],
+      "id": "95d24321-c15d-4b7d-b1fe-550ca23abf81",
+      "name": "Get many workflows",
+      "credentials": {
+        "n8nApi": {
+          "id": "avIh0YwIK8scY3gS",
+          "name": "new"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "7a4d842d-a544-4868-ba3b-97ee91564f9d"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        240,
+        -736
+      ],
+      "id": "08de4e34-ffac-490c-a416-7513a3e8544c",
+      "name": "workflow-sdk MCP",
+      "webhookId": "7a4d842d-a544-4868-ba3b-97ee91564f9d"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "WF to TS": {
+      "main": [
+        []
+      ]
+    },
+    "TS to WF": {
+      "main": [
+        [
+          {
+            "node": "Action: update?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get many workflows",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a workflow",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TS to WF",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TS to WF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_workflow": {
+      "ai_tool": [
+        [
+          {
+            "node": "workflow-sdk MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update_workflow": {
+      "ai_tool": [
+        [
+          {
+            "node": "workflow-sdk MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "search_workflows": {
+      "ai_tool": [
+        [
+          {
+            "node": "workflow-sdk MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a workflow": {
+      "main": [
+        [
+          {
+            "node": "WF to TS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update workflow": {
+      "main": [
+        [
+          {
+            "node": "Return success message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create_workflow": {
+      "ai_tool": [
+        [
+          {
+            "node": "workflow-sdk MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Action: update?": {
+      "main": [
+        [
+          {
+            "node": "Update workflow",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create workflow": {
+      "main": [
+        [
+          {
+            "node": "Return workflow details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many workflows": {
+      "main": [
+        [
+          {
+            "node": "Format response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "9e82f154-a70b-4f76-b9f4-963e4888c334",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "505c2bdb4483cbbca32871c0acd4b60c83809f177e47e2864f71c1c1760a9b2a"
+  },
+  "id": "fLrQk0sVAnhrF0em",
+  "tags": []
+}
