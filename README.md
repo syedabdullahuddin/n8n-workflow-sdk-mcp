@@ -1,5 +1,7 @@
 # n8n workflow-sdk MCP
 
+![n8n workflow-sdk MCP](n8n-workflow-mcp.png)
+
 A template for managing n8n workflows programmatically using Claude Code — with an MCP server workflow that lets Claude read and update your n8n workflows directly, using TypeScript as the authoring language.
 
 This template is designed to be used together with the **[n8n-workflow-sdk Claude Code skill](https://github.com/geckse/n8n-skills/)**, which teaches Claude the full SDK API, correct node patterns, and validation guidance for authoring n8n workflows in TypeScript.
